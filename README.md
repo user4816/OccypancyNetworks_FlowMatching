@@ -11,11 +11,13 @@ python generate.py configs/demo.yaml
 ## Install Meshlab
 - sudo apt update
 - sudo apt install -y meshlab
+- meshlab demo/generation/meshes/02.jpg.off
 
 ## Result
 - Demo result can be check in demo/generation/meshes.
 - Generate result using our pretrained model.
 - Checkpoint path is defined in 'configs/demo.yaml'.
 
+![그림1](https://github.com/user-attachments/assets/4689d7df-e6b0-4111-a6b4-821d041301bf)
 
 
