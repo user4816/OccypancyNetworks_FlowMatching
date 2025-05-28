@@ -1,9 +1,11 @@
-inherit_from: configs/img/onet_pretrained.yaml
+inherit_from: configs/img/onet.yaml
 data:
   dataset: images
   path: demo
 training:
   out_dir:  demo
+test:
+  model_file: '/home/wisrl/hynam/occupancy_networks/out/img/onet/model.pt'
 generation:
   generation_dir: generation
   refinement_step: 30

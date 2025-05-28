@@ -46,6 +46,7 @@ def get_model(cfg, device=None, dataset=None, **kwargs):
             c_dim=c_dim,
             **encoder_kwargs
         )
+
     else:
         encoder = None
 

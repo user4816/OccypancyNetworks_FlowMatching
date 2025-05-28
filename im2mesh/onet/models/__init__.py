@@ -1,7 +1,7 @@
 import torch
 import torch.nn as nn
 from torch import distributions as dist
-from im2mesh.onet.models import encoder_latent, decoder
+from im2mesh.onet.models import encoder_latent, decoder, flow_decoder
 
 # Encoder latent dictionary
 encoder_latent_dict = {
@@ -15,8 +15,9 @@ decoder_dict = {
     'cbatchnorm2': decoder.DecoderCBatchNorm2,
     'batchnorm': decoder.DecoderBatchNorm,
     'cbatchnorm_noresnet': decoder.DecoderCBatchNormNoResnet,
+    'LatentFlowDecoder': flow_decoder.LatentFlowDecoder,
+    'PerformerDecoder': flow_decoder.PerformerDecoder,
 }
-
 
 class OccupancyNetwork(nn.Module):
     ''' Occupancy Network class.
@@ -93,7 +94,6 @@ class OccupancyNetwork(nn.Module):
         if self.encoder is not None:
             c = self.encoder(inputs)
         else:
-            # Return inputs?
             c = torch.empty(inputs.size(0), 0)
 
         return c

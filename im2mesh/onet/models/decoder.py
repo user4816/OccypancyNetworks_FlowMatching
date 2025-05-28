@@ -1,4 +1,5 @@
 
+import torch
 import torch.nn as nn
 import torch.nn.functional as F
 from im2mesh.layers import (
@@ -6,7 +7,6 @@ from im2mesh.layers import (
     CBatchNorm1d, CBatchNorm1d_legacy,
     ResnetBlockConv1d
 )
-
 
 class Decoder(nn.Module):
     ''' Decoder class.
@@ -86,11 +86,13 @@ class DecoderCBatchNorm(nn.Module):
         legacy (bool): whether to use the legacy structure
     '''
 
-    def __init__(self, dim=3, z_dim=128, c_dim=128,
+    def __init__(self, dim=3, z_dim=0, c_dim=128,
                  hidden_size=256, leaky=False, legacy=False):
         super().__init__()
-        self.z_dim = z_dim
-        if not z_dim == 0:
+
+        self.z_dim = z_dim  ### [CHANGED/ADDED]
+
+        if self.z_dim != 0:
             self.fc_z = nn.Linear(z_dim, hidden_size)
 
         self.fc_p = nn.Conv1d(dim, hidden_size, 1)
@@ -113,13 +115,23 @@ class DecoderCBatchNorm(nn.Module):
             self.actvn = lambda x: F.leaky_relu(x, 0.2)
 
     def forward(self, p, z, c, **kwargs):
-        p = p.transpose(1, 2)
+        '''
+        p: [B, T, D]
+        z: [B, z_dim]  (can be empty if z_dim=0)
+        c: [B, c_dim]
+        '''
+        # (B, T, D) -> (B, D, T) for Conv1d
+        p = p.transpose(1, 2)  # [B, D, T]
         batch_size, D, T = p.size()
+
+        # fc_p: (B, hidden_size, T)
         net = self.fc_p(p)
 
         if self.z_dim != 0:
-            net_z = self.fc_z(z).unsqueeze(2)
-            net = net + net_z
+            z_feat = self.fc_z(z)   # [B, hidden_size]
+            z_feat = z_feat.unsqueeze(2)  # [B, hidden_size, 1]
+            z_feat = z_feat.expand(-1, -1, T)  # [B, hidden_size, T]
+            net = net + z_feat
 
         net = self.block0(net, c)
         net = self.block1(net, c)
@@ -127,11 +139,11 @@ class DecoderCBatchNorm(nn.Module):
         net = self.block3(net, c)
         net = self.block4(net, c)
 
-        out = self.fc_out(self.actvn(self.bn(net, c)))
-        out = out.squeeze(1)
+        out = self.fc_out(self.actvn(self.bn(net, c)))  # [B, 1, T]
+        out = out.squeeze(1)                            # [B, T]
 
         return out
-
+    
 
 class DecoderCBatchNorm2(nn.Module):
     ''' Decoder with CBN class 2.

@@ -2,7 +2,7 @@ from im2mesh.encoder import (
     conv, pix2mesh_cond, pointnet,
     psgn_cond, r2n2, voxels,
 )
-
+from im2mesh.encoder.vit_encoder import ViTEncoder
 
 encoder_dict = {
     'simple_conv': conv.ConvEncoder,
@@ -17,4 +17,5 @@ encoder_dict = {
     'psgn_cond': psgn_cond.PCGN_Cond,
     'voxel_simple': voxels.VoxelEncoder,
     'pixel2mesh_cond': pix2mesh_cond.Pix2mesh_Cond,
+    'vit_small': ViTEncoder,
 }
