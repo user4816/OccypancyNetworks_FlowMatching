@@ -1,14 +1,20 @@
-### FM-ONet: Occupancy Networks with Flowmatching
+## What's New
+Based on the original Texture Fields implementation(https://github.com/autonomousvision/texture_fields), we introduce enhancements and adjustments to improve model performance by adding Transforemr architecture in encoder/decoder. Users can modify encoder and decoder configurations in the provided YAML files to achieve optimized texture generation results. Our modifications allow clearer, higher-quality outputs for diverse single-view reconstruction tasks.
 
-conda env create -f fm_onet.yaml
-conda activate fm_onet
+## Installation
+conda env create -f enh_textfield.yaml
+conda activate Enh_textfield
 
-### Train
-## Adjust --nproc_per_node based on visible CUDA devices.
-## Note: Before training, modify encoder and decoder settings in configs/img/onet.yaml.
-python -m torch.distributed.launch --nproc_per_node=8 train.py configs/img/onet.yaml
+## Reproduction(Demo)
+python generate.py configs/singleview/texfields/car_demo.yaml
+
+## Result
+- Demo result can be check in out>demo.
+- Generate result using our pretrained model.
+- Checkpoint path is defined in 'configs/singleview/texfields/car_demo.yaml'.
 
 
-### Generate (Inference)
-## Note: This step uses a pretrained model checkpoint specified in configs/demo.yaml.
-python generate.py configs/demo.yaml
+![1](https://github.com/user-attachments/assets/03f88f1a-8d4a-41d1-a42e-95cb8da30030)
+
+
+
